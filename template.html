@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>דף נחיתה - הפינה למשכנתאות (תבנית)</title>
+    <style>
+        :root {
+            --primary-navy: #1a2a44;
+            --primary-gold: #c5a059;
+            --success-color: #2fb380;
+            --text-color: #333;
+        }
+
+        body { font-family: sans-serif; margin: 0; padding: 0; background: #f8f9fa; color: var(--text-color); }
+        .container { max-width: 500px; margin: 40px auto; padding: 20px; background: #fff; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+        h1 { text-align: center; color: var(--primary-navy); }
+        
+        .form-group { margin-bottom: 15px; text-align: right; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; }
+        input[type="text"], input[type="tel"], input[type="email"], textarea {
+            width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; font-size: 16px;
+        }
+        
+        .checkbox-container {
+            display: flex; align-items: flex-start; gap: 12px; text-align: right; margin: 20px 0; font-size: 14px; cursor: pointer; line-height: 1.4;
+        }
+        .checkbox-container input { width: 18px; height: 18px; margin-top: 4px; }
+        
+        .btn-submit {
+            width: 100%; padding: 16px; background: var(--primary-navy); color: #fff; border: none; border-radius: 8px; font-size: 18px; font-weight: bold; cursor: pointer; transition: 0.3s;
+        }
+        .btn-submit:hover { background: #253a5e; }
+        .btn-submit:disabled { opacity: 0.7; cursor: not-allowed; }
+        
+        .success-msg { text-align: center; color: var(--success-color); font-weight: bold; padding: 20px; }
+    </style>
+</head>
+<body>
+
+<div class="container" id="form-container">
+    <h1>השאירו פרטים ונחזור אליכם</h1>
+    
+    <div class="form-group">
+        <label>שם מלא</label>
+        <input type="text" id="lead-name" placeholder="שם מלא">
+    </div>
+    
+    <div class="form-group">
+        <label>מספר טלפון</label>
+        <input type="tel" id="lead-phone" placeholder="05X-XXXXXXX">
+    </div>
+    
+    <div class="form-group">
+        <label>כתובת אימייל</label>
+        <input type="email" id="lead-email" placeholder="דואר אלקטרוני">
+    </div>
+    
+    <div class="form-group">
+        <label>הערות נוספות</label>
+        <textarea id="lead-notes" rows="3" placeholder="זמן נוח לחזרה או שאלות נוספות..."></textarea>
+    </div>
+
+    <!-- Hidden Tracking Fields (Populated by Script) -->
+    <input type="hidden" id="track_source" value="organic">
+    <input type="hidden" id="track_campaign" value="general">
+    <input type="hidden" id="track_medium" value="">
+    <input type="hidden" id="track_content" value="">
+    <input type="hidden" id="track_page" value="">
+
+    <label class="checkbox-container">
+        <input type="checkbox" id="lead-consent">
+        <span>אני מאשר קבלת תכנים שיווקיים ופרסומיים בהתאם לתנאי השימוש וחוק התקשורת</span>
+    </label>
+    
+    <button class="btn-submit" onclick="submitLead()">שלח פנייה</button>
+</div>
+
+<script>
+    // --- 1. Automation Configuration ---
+    const MAKE_WEBHOOK_URL = 'https://hook.eu1.make.com/YOUR_WEBHOOK_URL'; // <--- שנה רק את זה לקישור שלך!
+    const CRM_WEBHOOK_URL = '/api/leads/webhook'; // עובד אוטומטית אם המחשבון וה-CRM על אותו דומיין
+
+    async function submitLead() {
+        const fullName = document.getElementById('lead-name').value;
+        const phone = document.getElementById('lead-phone').value;
+        const email = document.getElementById('lead-email').value;
+        const notes = document.getElementById('lead-notes').value;
+        const consent = document.getElementById('lead-consent').checked;
+
+        if (!fullName || !phone) { alert("אנא מלאו שם וטלפון"); return; }
+        if (!consent) { alert("יש לאשר את תנאי ההסכמה"); return; }
+
+        const leadData = {
+            full_name: fullName,
+            phone: phone,
+            email: email,
+            notes: notes,
+            source: localStorage.getItem('track_utm_source') || 'organic',
+            campaign: localStorage.getItem('track_utm_campaign') || 'general',
+            medium: localStorage.getItem('track_utm_medium') || '',
+            content: localStorage.getItem('track_utm_content') || '',
+            page: window.location.href,
+            timestamp: new Date().toISOString()
+        };
+
+        const container = document.getElementById('form-container');
+        const originalContent = container.innerHTML;
+        container.innerHTML = '<div style="text-align:center; padding: 40px;">שולח...</div>';
+
+        try {
+            // Send to Make.com (Secure Proxy to Airtable/WhatsApp/etc.)
+            const response = await fetch(MAKE_WEBHOOK_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(leadData)
+            });
+
+            if (response.ok) {
+                container.innerHTML = '<div class="success-msg">תודה ' + fullName + '!<br>הפרטים נשלחו בהצלחה. נחזור אליך בהקדם.</div>';
+            } else {
+                throw new Error('Send failed');
+            }
+        } catch (e) {
+            alert('חלה שגיאה בשליחה. אנא נסו שוב.');
+            container.innerHTML = originalContent;
+        }
+    }
+
+    // --- 2. Tracking System (UTM & Storage) ---
+    (function () {
+        const trackingParams = ['utm_source', 'utm_campaign', 'utm_medium', 'utm_content'];
+        function captureTrackingData() {
+            const urlParams = new URLSearchParams(window.location.search);
+            trackingParams.forEach(param => {
+                const value = urlParams.get(param);
+                if (value) localStorage.setItem('track_' + param, value);
+            });
+            localStorage.setItem('track_page', window.location.href);
+        }
+        function populateFields() {
+            if (document.getElementById('track_source')) document.getElementById('track_source').value = localStorage.getItem('track_utm_source') || 'organic';
+            if (document.getElementById('track_campaign')) document.getElementById('track_campaign').value = localStorage.getItem('track_utm_campaign') || 'general';
+            // etc...
+        }
+        captureTrackingData();
+        window.addEventListener('load', populateFields);
+    })();
+</script>
+
+</body>
+</html>
