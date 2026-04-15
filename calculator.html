@@ -1,0 +1,1133 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>מחשבון איחוד חובות - הבראה כלכלית</title>
+    <!-- Importing a modern Hebrew font -->
+    <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --success-color: #27ae60;
+            --warning-color: #f39c12;
+            --danger-color: #e74c3c;
+            --bg-color: #fdfaf5;
+            /* Cream background */
+            --card-bg: #ffffff;
+            --border-color: #dcdde1;
+            --finance-navy: #1e293b;
+            --custom-green: #e9f5ed;
+            /* Soft green */
+            --dark-green: #27ae60;
+            --senior-gold: #b8860b;
+        }
+
+        body {
+            font-family: 'Assistant', 'Segoe UI', system-ui, sans-serif;
+            background-color: var(--bg-color);
+            margin: 0;
+            padding: 0;
+            /* Removed padding to allow full-width header */
+            color: var(--primary-color);
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            /* Added padding here instead */
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            padding: 30px;
+            margin-bottom: 20px;
+        }
+
+        .main-title {
+            text-align: center;
+            margin-top: 0;
+            margin-bottom: 10px;
+            color: var(--success-color);
+            font-size: 32px;
+            font-weight: 800;
+            line-height: 1.3;
+        }
+
+        .sub-title {
+            text-align: center;
+            color: #7f8c8d;
+            margin-bottom: 30px;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin: 25px 0 15px;
+            padding-bottom: 5px;
+            border-bottom: 2px solid #eee;
+            color: var(--primary-color);
+        }
+
+        .input-row {
+            display: grid;
+            grid-template-columns: 1.5fr 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 15px;
+            align-items: end;
+        }
+
+        .general-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        @media (max-width: 768px) {
+
+            .input-row,
+            .general-grid {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+
+            .hide-mobile,
+            .header-labels {
+                display: none !important;
+            }
+
+            .main-title {
+                font-size: 26px;
+            }
+
+            .sub-title {
+                font-size: 16px;
+            }
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            margin-bottom: 5px;
+            font-weight: 600;
+            font-size: 14px;
+            color: #555;
+            text-align: right;
+            /* Ensure labels are right-aligned in RTL */
+        }
+
+        input,
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 16px;
+            box-sizing: border-box;
+            background: #fafafa;
+            font-family: inherit;
+        }
+
+        input:focus,
+        textarea:focus {
+            border-color: var(--success-color);
+            outline: none;
+            background: #fff;
+            box-shadow: 0 0 0 3px rgba(39, 174, 96, 0.1);
+        }
+
+        .row-label {
+            font-weight: 700;
+            font-size: 16px;
+            align-self: center;
+            padding-bottom: 10px;
+        }
+
+        .btn-calc {
+            width: 100%;
+            background: var(--success-color);
+            color: white;
+            border: none;
+            padding: 18px;
+            border-radius: 12px;
+            font-size: 22px;
+            font-weight: 800;
+            cursor: pointer;
+            margin-top: 25px;
+            transition: 0.3s;
+            box-shadow: 0 4px 15px rgba(39, 174, 96, 0.3);
+            font-family: inherit;
+        }
+
+        .btn-calc:hover {
+            background: #219150;
+            transform: translateY(-2px);
+        }
+
+        .minus-cost-indicator {
+            font-size: 13px;
+            color: var(--danger-color);
+            font-weight: 700;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .results-area {
+            display: none;
+            margin-top: 30px;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            table-layout: fixed;
+        }
+
+        .comparison-table th,
+        .comparison-table td {
+            padding: 15px;
+            text-align: center !important;
+            border-bottom: 1px solid #eee;
+            width: 33.33%;
+        }
+
+        .summary-box {
+            background: #e6fffa;
+            border: 2px solid #b2f5ea;
+            border-radius: 12px;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .savings-value {
+            font-size: 46px;
+            font-weight: 800;
+            color: var(--success-color);
+            display: block;
+            margin: 10px 0;
+        }
+
+        .low-savings-alert {
+            display: none;
+            background: #fff5f5;
+            border: 1px solid #feb2b2;
+            color: #c53030;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            font-weight: 600;
+            font-size: 15px;
+            text-align: center;
+        }
+
+        /* Senior Benefits Special Box */
+        .senior-benefit-box {
+            display: none;
+            background: linear-gradient(135deg, #fffcf0, #fff7d6);
+            border: 2px solid var(--senior-gold);
+            padding: 20px;
+            border-radius: 12px;
+            margin: 20px 0;
+            text-align: center;
+            animation: fadeIn 0.8s ease;
+        }
+
+        .senior-benefit-box h4 {
+            color: var(--senior-gold);
+            margin: 0 0 10px;
+            font-size: 22px;
+            font-weight: 800;
+        }
+
+        .senior-benefit-box p {
+            font-size: 16px;
+            margin: 0;
+            color: #5d4037;
+            line-height: 1.5;
+            font-weight: 600;
+        }
+
+        /* --- SUBTLE & AUTHENTIC CONTACT FORM STYLES --- */
+        .contact-section {
+            margin-top: 40px;
+            padding: 40px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-top: 4px solid var(--finance-navy);
+            color: var(--primary-color);
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+        }
+
+        .contact-section h3 {
+            margin-top: 0;
+            color: var(--finance-navy);
+            font-size: 26px;
+            font-weight: 800;
+            margin-bottom: 10px;
+        }
+
+        .contact-section .sub-h3 {
+            color: #64748b;
+            font-size: 17px;
+            margin-bottom: 25px;
+            font-weight: 600;
+        }
+
+        .contact-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        @media (max-width: 600px) {
+            .contact-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .checkbox-container {
+            grid-column: 1 / -1;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-align: right;
+            margin: 10px 0;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .checkbox-container input {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+
+        .contact-grid input,
+        .contact-grid textarea {
+            background: #ffffff;
+            border: 1px solid #cbd5e1;
+            color: var(--primary-color);
+            text-align: right;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background-color: #fff;
+            margin: 5% auto;
+            padding: 30px;
+            border-radius: 15px;
+            width: 80%;
+            max-width: 700px;
+            max-height: 80vh;
+            overflow-y: auto;
+            position: relative;
+            box-shadow: 0 5px 30px rgba(0, 0, 0, 0.2);
+            line-height: 1.6;
+            text-align: right;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            color: #aaa;
+        }
+
+        .close-modal:hover {
+            color: var(--danger-color);
+        }
+
+        .terms-link {
+            color: var(--dark-green);
+            text-decoration: underline;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .submit-lead-btn {
+            grid-column: 1 / -1;
+            background: var(--finance-navy);
+            color: white;
+            border: none;
+            padding: 18px;
+            border-radius: 10px;
+            font-size: 20px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: 0.3s;
+            margin-top: 15px;
+            box-shadow: 0 4px 12px rgba(30, 41, 59, 0.15);
+            font-family: inherit;
+        }
+
+        .submit-lead-btn:hover {
+            background: #0f172a;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(30, 41, 59, 0.2);
+        }
+
+        .success-msg {
+            color: var(--success-color);
+            font-weight: 800;
+            padding: 30px;
+            font-size: 20px;
+        }
+
+        .footer {
+            text-align: center;
+            font-size: 13px;
+            color: #95a5a6;
+            margin-top: 30px;
+        }
+
+        .site-header {
+            background: var(--custom-green);
+            padding: 15px 0;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            width: 100%;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-content {
+            max-width: 900px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+        }
+
+        /* Burger Menu Styling */
+        .burger-menu {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            cursor: pointer;
+            padding: 5px;
+        }
+
+        .burger-bar {
+            width: 25px;
+            height: 3px;
+            background-color: var(--dark-green);
+            border-radius: 2px;
+        }
+
+        @media (max-width: 768px) {
+            .burger-menu {
+                display: flex;
+            }
+
+            .site-header {
+                padding: 10px 0;
+            }
+        }
+
+        .logo {
+            max-width: 90%;
+            max-height: 180px;
+            /* Adjusted size for card placement */
+            width: auto;
+            height: auto;
+            transition: 0.3s;
+            display: block;
+            margin: 0 auto 25px auto;
+            /* Centered with margin bottom */
+        }
+
+        @media (max-width: 768px) {
+            .logo {
+                max-height: 150px;
+                /* Scale down on mobile */
+            }
+
+            .site-header {
+                padding: 5px 0;
+            }
+        }
+
+        .header-labels {
+            display: grid;
+            grid-template-columns: 1.5fr 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 8px;
+            font-weight: 700;
+            font-size: 14px;
+            color: #7f8c8d;
+        }
+
+        .footer-bar {
+            background: var(--custom-green);
+            color: #444;
+            padding: 25px 0;
+            margin-top: 50px;
+            text-align: center;
+            border-top: 1px solid #dceada;
+        }
+
+        .footer-content {
+            max-width: 900px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 20px;
+        }
+
+        .footer-links a {
+            text-decoration: none;
+            color: #444;
+            transition: 0.3s;
+        }
+
+        .footer-links a:hover {
+            color: var(--dark-green);
+        }
+
+        /* WhatsApp Floating Button */
+        .whatsapp-float {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background-color: #25d366;
+            color: white;
+            width: 60px;
+            height: 60px;
+            border-radius: 50px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 30px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            transition: 0.3s;
+            text-decoration: none;
+        }
+
+        .whatsapp-float:hover {
+            transform: scale(1.1);
+            background-color: #128c7e;
+        }
+
+        /* WhatsApp Animation */
+        @keyframes pulse-whatsapp {
+            0% {
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.7);
+            }
+
+            70% {
+                transform: scale(1.1);
+                box-shadow: 0 0 0 15px rgba(37, 211, 102, 0);
+            }
+
+            100% {
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(37, 211, 102, 0);
+            }
+        }
+
+        .whatsapp-float {
+            animation: pulse-whatsapp 2s infinite;
+        }
+
+        @media (max-width: 600px) {
+            .footer-content {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .whatsapp-float {
+                bottom: 20px;
+                right: 20px;
+                width: 50px;
+                height: 50px;
+                font-size: 25px;
+            }
+        }
+
+        .footer-content {
+            max-width: 900px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+        }
+
+        /* Mobile Overrides - Final Word */
+        @media (max-width: 768px) {
+
+            .hide-mobile,
+            .header-labels,
+            #calculator-headers {
+                display: none !important;
+            }
+
+            .footer-content {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <div class="card">
+            <img src="לוגו הפינה למשכנתאות .png" alt="לוגו הפינה למשכנתאות" class="logo">
+            <h1 class="main-title">נחנקים מההחזרים החודשיים? <br>הסוד שהבנקים לא מגלים לכם על איחוד הלוואות</h1>
+            <p class="sub-title">גלו תוך 60 שניות כמה כסף ניתן לחסוך בכל חודש</p>
+
+            <div class="section-title">נתונים כלליים</div>
+            <div class="general-grid">
+                <div class="input-group">
+                    <label>שווי נכס (₪)</label>
+                    <input type="text" id="asset-value" inputmode="numeric" placeholder="2,000,000"
+                        oninput="formatInput(this)">
+                </div>
+                <div class="input-group">
+                    <label>הכנסות חודשיות נטו (₪)</label>
+                    <input type="text" id="monthly-income" inputmode="numeric" placeholder="15,000"
+                        oninput="formatInput(this)">
+                </div>
+                <div class="input-group">
+                    <label>גיל הלקוח</label>
+                    <input type="number" id="client-age" placeholder="לדוגמה: 40" min="18" max="79">
+                </div>
+            </div>
+
+            <div class="section-title">פירוט התחייבויות נוכחיות</div>
+
+            <div id="calculator-headers" class="header-labels hide-mobile">
+                <div>סוג החוב</div>
+                <div>יתרה לסילוק (₪)</div>
+                <div>החזר חודשי (₪)</div>
+            </div>
+
+            <!-- Mortgage Row -->
+            <div class="input-row">
+                <div class="row-label">משכנתא קיימת</div>
+                <div class="input-group">
+                    <input type="text" id="mortgage-balance" inputmode="numeric" placeholder="יתרת משכנתא"
+                        oninput="formatInput(this)">
+                </div>
+                <div class="input-group">
+                    <input type="text" id="mortgage-pay" inputmode="numeric" placeholder="החזר חודשי"
+                        oninput="formatInput(this)">
+                </div>
+            </div>
+
+            <!-- Loans Row -->
+            <div class="input-row">
+                <div class="row-label">הלוואות בנקים/אחר</div>
+                <div class="input-group">
+                    <input type="text" id="loans-balance" inputmode="numeric" placeholder="יתרת הלוואות"
+                        oninput="formatInput(this)">
+                </div>
+                <div class="input-group">
+                    <input type="text" id="loans-pay" inputmode="numeric" placeholder="החזר חודשי"
+                        oninput="formatInput(this)">
+                </div>
+            </div>
+
+            <!-- Credit Cards Row -->
+            <div class="input-row">
+                <div class="row-label">כרטיסי אשראי</div>
+                <div class="input-group">
+                    <input type="text" id="cc-balance" inputmode="numeric" placeholder="יתרת אשראי"
+                        oninput="formatInput(this)">
+                </div>
+                <div class="input-group">
+                    <input type="text" id="cc-pay" inputmode="numeric" placeholder="החזר חודשי"
+                        oninput="formatInput(this)">
+                </div>
+            </div>
+
+            <!-- Minus Row -->
+            <div class="input-row">
+                <div class="row-label">יתרת מינוס (עו"ש)</div>
+                <div class="input-group">
+                    <input type="text" id="minus-balance" inputmode="numeric" placeholder="כמה אתם במינוס?"
+                        oninput="updateMinusCost(this)">
+                    <div id="minus-monthly-cost-display" class="minus-cost-indicator"></div>
+                </div>
+                <div class="input-group"></div>
+            </div>
+
+            <button class="btn-calc" onclick="calculateConsolidation()">אני רוצה לנשום לרווחה - בדקו לי!</button>
+        </div>
+
+        <div id="results" class="results-area">
+            <div class="card">
+                <h2>תוצאות הניתוח הפיננסי</h2>
+
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>נתון</th>
+                            <th>מצב קיים</th>
+                            <th>אחרי איחוד הלוואות</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>סך כל החובות</td>
+                            <td id="total-debt-today">-</td>
+                            <td id="total-debt-new">-</td>
+                        </tr>
+                        <tr>
+                            <td>החזר חודשי כולל</td>
+                            <td id="total-pay-today" style="color: var(--danger-color); font-weight: bold;">-</td>
+                            <td id="total-pay-new" style="color: var(--success-color); font-weight: bold;">-</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="summary-box">
+                    <span id="savings-label" style="font-size: 20px; font-weight: 700;">חיסכון חודשי פוטנציאלי:</span>
+                    <span id="monthly-savings" class="savings-value">0 ₪</span>
+                    <div id="yearly-savings" style="font-size: 22px; font-weight: 800; color: var(--primary-color);">
+                        חיסכון שנתי מדהים של 0 ₪</div>
+
+                    <!-- Message for low/no savings -->
+                    <div id="low-savings-message" class="low-savings-alert"></div>
+                </div>
+
+                <!-- Senior Benefits Messaging -->
+                <div id="senior-benefit-container" class="senior-benefit-box">
+                    <h4>הטבות מיוחדות לבני 60 פלוס 🌟</h4>
+                    <p>כבעלי נכס בגיל השלישי, יש פתרונות ייחודיים שיכולים להתאים לכם לצורך הבראה כלכלית והורדה בהחזרים
+                        החודשיים משמעותית. השאירו פרטים ונציג יחזור אליכם</p>
+                </div>
+
+                <!-- AUTHENTIC CONTACT FORM SECTION -->
+                <div class="contact-section" id="contact-form-container">
+                    <h3>הגיע הזמן לעשות שינוי אמיתי ולצאת להבראה כלכלית</h3>
+                    <div class="sub-h3">לבדיקה ללא עלות השאירו פרטים ונציג יחזור אליכם</div>
+                    <div class="contact-grid">
+                        <div class="input-group">
+                            <label>שם מלא</label>
+                            <input type="text" id="lead-name" placeholder="שם מלא">
+                        </div>
+                        <div class="input-group">
+                            <label>מספר טלפון</label>
+                            <input type="tel" id="lead-phone" placeholder="05X-XXXXXXX">
+                        </div>
+                        <div class="input-group">
+                            <label>כתובת אימייל</label>
+                            <input type="email" id="lead-email" placeholder="הזן כתובת אימייל">
+                        </div>
+                        <div class="input-group" style="grid-column: 1 / -1;">
+                            <label>הערות</label>
+                            <textarea id="lead_notes" rows="2"
+                                placeholder="זמן נוח לחזרה או שאלות נוספות..."></textarea>
+                        </div>
+
+                        <!-- Smart Tracking Fields -->
+                        <input type="hidden" id="track_source" value="organic">
+                        <input type="hidden" id="track_campaign" value="general">
+                        <input type="hidden" id="track_medium" value="">
+                        <input type="hidden" id="track_content" value="">
+                        <input type="hidden" id="track_page" value="">
+                        <label class="checkbox-container">
+                            <input type="checkbox" id="lead-consent">
+                            <span>אני מאשר קבלת תכנים שיווקיים ופרסומיים בהתאם ל<span class="terms-link"
+                                    onclick="openModal()">תנאי השימוש וחוק התקשורת</span></span>
+                        </label>
+                        <button class="submit-lead-btn" onclick="submitLead()">אני רוצה להתחיל לחסוך - חזרו
+                            אליי</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <a href="https://wa.me/972559884824?text=%D7%94%D7%99%D7%99%20%D7%90%D7%A9%D7%9E%D7%97%20%D7%9C%D7%A9%D7%9E%D7%95%D7%A2%20%D7%A2%D7%95%D7%93%20%D7%A2%D7%9C%20%D7%94%D7%A9%D7%99%D7%A8%D7%95%D7%AA%D7%99%D7%9D%20%D7%A9%D7%9C%D7%9B%D7%9D"
+        class="whatsapp-float" target="_blank">
+        <svg style="width: 35px; fill: white;"
+            viewBox="0 0 448 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+            <path
+                d="M380.9 97.1C339 55.1 283.2 32 223.9 32c-122.4 0-222 99.6-222 222 0 39.1 10.2 77.3 29.6 111L0 480l117.7-30.9c32.4 17.7 68.9 27 106.1 27h.1c122.3 0 224.1-99.6 224.1-222 0-59.3-25.2-115-67.1-157zm-157 341.6c-33.2 0-65.7-8.9-94-25.7l-6.7-4-69.8 18.3L72 359.2l-4.4-7c-18.5-29.4-28.2-63.3-28.2-98.2 0-101.7 82.8-184.5 184.6-184.5 49.3 0 95.6 19.2 130.4 54.1 34.8 34.9 56.2 81.2 56.1 130.5 0 101.8-84.9 184.6-186.6 184.6zm101.2-138.2c-5.5-2.8-32.8-16.2-37.9-18-5.1-1.9-8.8-2.8-12.5 2.8-3.7 5.6-14.3 18-17.6 21.8-3.2 3.7-6.5 4.2-12 1.4-5.5-2.8-23.2-8.5-44.2-27.1-16.4-14.6-27.4-32.7-30.6-38.2-3.2-5.6-.3-8.6 2.5-11.3 2.5-2.5 5.6-6.5 8.3-9.8 2.8-3.2 3.7-5.6 5.6-9.3 1.8-3.7.9-6.9-.5-9.8-1.4-2.8-12.5-30.1-17.1-41.2-4.5-10.8-9.1-9.3-12.5-9.5-3.2-.2-6.9-.2-10.6-.2-3.7 0-9.7 1.4-14.8 6.9-5.1 5.6-19.4 19-19.4 46.3 0 27.3 19.9 53.7 22.6 57.4 2.8 3.7 39.1 59.7 94.8 83.8 13.2 5.8 23.5 9.2 31.6 11.8 13.3 4.2 25.4 3.6 35 2.2 10.7-1.5 32.8-13.4 37.4-26.4 4.6-13 4.6-24.1 3.2-26.4-1.3-2.5-5-3.9-10.5-6.6z" />
+        </svg>
+    </a>
+
+    <!-- Terms Modal -->
+    <div id="termsModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal()">&times;</span>
+            <h2 style="color: var(--finance-navy);">תנאי שימוש ואישור דיוור</h2>
+            <p><strong>1. אישור קבלת מידע שיווקי:</strong> בעצם סימון תיבת ההסכמה ושליחת הטופס, אני נותן את הסכמתי
+                המפורשת ל'הפינה למשכנתאות' (להלן: "החברה") או מי מטעמה, לשלוח אליי מעת לעת מידע שיווקי, הצעות מסחריות,
+                דברי פרסומת ותכנים מקצועיים.</p>
+            <p><strong>2. אמצעי התקשורת:</strong> מסירת המידע תעשה באמצעות כל אחד מאמצעי ההתקשורת שנמסרו על ידי בטופס,
+                לרבות טלפון, הודעת SMS, WhatsApp וכתובת דואר אלקטרוני.</p>
+            <p><strong>3. חוק התקשורת:</strong> הסכמה זו מהווה הסכמה לפי חוק התקשורת (בזק ושידורים), התשמ"ב-1982 (חוק
+                הספם) ולפי חוק הגנת הפרטיות, התשמ"א-1981.</p>
+            <p><strong>4. זכות הסרה:</strong> ידוע לי כי אוכל לבקש את הסרת שמי מרשימת התפוצה בכל עת על ידי שליחת הודעת
+                "הסר" חוזרת או פנייה לשירות הלקוחות של החברה.</p>
+            <p><strong>5. שימוש במידע:</strong> החברה מתחייבת לעשות שימוש בפרטים שנמסרו אך ורק לצורך יצירת קשר, מתן
+                השירות המבוקש ודיוור כאמור, ולא להעבירם לצד ג' שאינו קשור למתן השירות ללא הסכמה מפורשת.</p>
+            <p style="margin-top: 20px; font-weight: bold; border-top: 1px solid #eee; padding-top: 10px;">בלחיצה על
+                "אישור" בטופס, הנך מצהיר כי קראת והבנת את התנאים לעיל.</p>
+        </div>
+    </div>
+
+    <script>
+        function openModal() {
+            document.getElementById('termsModal').style.display = 'block';
+        }
+
+        function closeModal() {
+            document.getElementById('termsModal').style.display = 'none';
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function (event) {
+            const modal = document.getElementById('termsModal');
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        }
+
+        function formatInput(input) {
+            let value = input.value.replace(/,/g, '');
+            if (!isNaN(value) && value !== "") {
+                input.value = parseFloat(value).toLocaleString('en-US');
+            }
+        }
+
+        function updateMinusCost(input) {
+            formatInput(input);
+            const val = parseFloat(input.value.replace(/,/g, '')) || 0;
+            const display = document.getElementById('minus-monthly-cost-display');
+
+            if (val > 0) {
+                const monthlyCost = Math.round((val * 0.10) / 3);
+                display.innerText = `עלות ריבית חודשית: ${monthlyCost.toLocaleString()} ₪`;
+                display.style.display = 'block';
+            } else {
+                display.style.display = 'none';
+            }
+        }
+
+        function getRawValue(id) {
+            const val = document.getElementById(id).value.replace(/,/g, '');
+            return parseFloat(val) || 0;
+        }
+
+        function pmt(principal, annualRate, years) {
+            if (principal <= 0 || years <= 0) return 0;
+            const monthlyRate = annualRate / 100 / 12;
+            const numberOfPayments = years * 12;
+            return (principal * monthlyRate) / (1 - Math.pow(1 + monthlyRate, -numberOfPayments));
+        }
+
+        function calculateConsolidation() {
+            const asset = getRawValue('asset-value');
+            const age = parseInt(document.getElementById('client-age').value) || 0;
+
+            const mortgageBal = getRawValue('mortgage-balance');
+            const mortgagePay = getRawValue('mortgage-pay');
+            const loansBal = getRawValue('loans-balance');
+            const loansPay = getRawValue('loans-pay');
+            const ccBal = getRawValue('cc-balance');
+            const ccPay = getRawValue('cc-pay');
+            const minusBal = getRawValue('minus-balance');
+
+            if (asset === 0) {
+                alert("אנא הזן את שווי הנכס כדי שנוכל לחשב עבורך את החיסכון");
+                return;
+            }
+
+            let loanYears = 30;
+            if (age > 0) {
+                loanYears = Math.min(30, Math.max(1, 80 - age));
+            }
+
+            // Senior Benefit Visibility
+            const seniorBox = document.getElementById('senior-benefit-container');
+            if (age >= 65) {
+                seniorBox.style.display = 'block';
+            } else {
+                seniorBox.style.display = 'none';
+            }
+
+            const monthlyMinusCost = (minusBal * 0.10) / 3;
+            const totalCurrentPay = mortgagePay + loansPay + ccPay + monthlyMinusCost;
+            const totalDebt = mortgageBal + loansBal + ccBal + minusBal;
+
+            // --- Mortgage calculation (Updated to 4.0%) ---
+            const newMortgagePart = pmt(mortgageBal, 4.0, loanYears);
+
+            let remainingToConsolidate = loansBal + ccBal + minusBal;
+            let bankTier1 = 0, bankTier2 = 0, nonBankTier = 0, tailTier = 0;
+
+            // --- Tier 1 (Bank 5.9%) ---
+            const limit50 = asset * 0.5;
+            const spaceIn50 = Math.max(0, limit50 - mortgageBal);
+            bankTier1 = Math.min(remainingToConsolidate, spaceIn50);
+            remainingToConsolidate -= bankTier1;
+
+            // --- Tier 2 (Bank 5.9%) ---
+            const limit70 = asset * 0.7;
+            const currentPosAfterT1 = mortgageBal + bankTier1;
+            const spaceIn70 = Math.min(200000, Math.max(0, limit70 - currentPosAfterT1));
+            bankTier2 = Math.min(remainingToConsolidate, spaceIn70);
+            remainingToConsolidate -= bankTier2;
+
+            // --- Tier 3 (Non-Bank 8.5%) ---
+            const limit80 = asset * 0.8;
+            const currentPosAfterT2 = mortgageBal + bankTier1 + bankTier2;
+            const spaceIn80 = Math.max(0, limit80 - currentPosAfterT2);
+            nonBankTier = Math.min(remainingToConsolidate, spaceIn80);
+            remainingToConsolidate -= nonBankTier;
+
+            // --- Tail Logic ---
+            let tailYears = loanYears;
+            let tailRate = 8.5;
+
+            if (remainingToConsolidate > 0 && remainingToConsolidate <= 200000) {
+                tailYears = 18;
+                tailRate = 8;
+            }
+            tailTier = remainingToConsolidate;
+
+            const newLoansPart =
+                pmt(bankTier1, 5.9, loanYears) +
+                pmt(bankTier2, 5.9, loanYears) +
+                pmt(nonBankTier, 8.5, loanYears) +
+                pmt(tailTier, tailRate, tailYears);
+
+            const totalNewPay = newMortgagePart + newLoansPart;
+
+            document.getElementById('total-debt-today').innerText = Math.round(totalDebt).toLocaleString() + ' ₪';
+            document.getElementById('total-debt-new').innerText = Math.round(totalDebt).toLocaleString() + ' ₪';
+            document.getElementById('total-pay-today').innerText = Math.round(totalCurrentPay).toLocaleString() + ' ₪';
+            document.getElementById('total-pay-new').innerText = Math.round(totalNewPay).toLocaleString() + ' ₪';
+
+            const savings = totalCurrentPay - totalNewPay;
+            const savingsDisplay = Math.max(0, Math.round(savings));
+
+            document.getElementById('monthly-savings').innerText = savingsDisplay.toLocaleString() + ' ₪';
+            document.getElementById('yearly-savings').innerText = `חיסכון שנתי מדהים של ${(savingsDisplay * 12).toLocaleString()} ₪`;
+
+            // Message logic for low or zero savings
+            const lowSavingsMsg = document.getElementById('low-savings-message');
+            if (savings <= 0) {
+                lowSavingsMsg.innerText = "נראה שלא נמצא חיסכון מיידי בחישוב היבש, אך אל דאגה - ישנם פתרונות מחוץ לקופסה. נציג יחזור אליכם לבדיקה אישית ומציאת פתרון אחר.";
+                lowSavingsMsg.style.display = 'block';
+                document.getElementById('savings-label').innerText = "חיסכון חודשי משוער:";
+            } else if (savings < 800) {
+                lowSavingsMsg.innerText = "החיסכון הצפוי נראה כרגע נמוך, אך בשיחה עם נציג ייתכן שנוכל למצוא עבורכם פתרונות יצירתיים נוספים שיורידו את ההחזר משמעותית.";
+                lowSavingsMsg.style.display = 'block';
+                document.getElementById('savings-label').innerText = "חיסכון חודשי פוטנציאלי:";
+            } else {
+                lowSavingsMsg.style.display = 'none';
+                document.getElementById('savings-label').innerText = "חיסכון חודשי פוטנציאלי:";
+            }
+
+            document.getElementById('results').style.display = 'block';
+            window.scrollTo({ top: document.getElementById('results').offsetTop - 20, behavior: 'smooth' });
+        }
+
+        async function submitLead() {
+            const fullName = document.getElementById('lead-name').value;
+            const phone = document.getElementById('lead-phone').value;
+            const email = document.getElementById('lead-email').value;
+            const notes = document.getElementById('lead_notes') ? document.getElementById('lead_notes').value : "";
+            const consent = document.getElementById('lead-consent').checked;
+
+            if (!fullName || !phone) {
+                alert("אנא מלאו שם וטלפון כדי שנוכל לחזור אליכם");
+                return;
+            }
+
+            if (!consent) {
+                alert("יש לאשר את תנאי ההסכמה כדי להמשיך");
+                return;
+            }
+
+            // --- Capture All Calculator Data ---
+            const assetValue = getRawValue('asset-value');
+            const monthlyIncome = getRawValue('monthly-income');
+            const age = parseInt(document.getElementById('client-age').value) || 0;
+            const mortgageBal = getRawValue('mortgage-balance');
+            const mortgagePay = getRawValue('mortgage-pay');
+            const loansBal = getRawValue('loans-balance');
+            const loansPay = getRawValue('loans-pay');
+            const ccBal = getRawValue('cc-balance');
+            const ccPay = getRawValue('cc-pay');
+            const minusBal = getRawValue('minus-balance');
+            const monthlySavings = document.getElementById('monthly-savings').innerText;
+
+            // --- Split Name Logic ---
+            const nameParts = fullName.trim().split(/\s+/);
+            const firstName = nameParts[0] || '';
+            const lastName = nameParts.slice(1).join(' ') || '';
+
+            // Prepare comprehensive data object in the EXACT requested JSON structure
+            const leadData = {
+                first_name: firstName,
+                last_name: lastName,
+                phone: phone,
+                email: email,
+                utm_source: localStorage.getItem('track_utm_source') || 'organic',
+                utm_medium: localStorage.getItem('track_utm_medium') || '',
+                utm_campaign: localStorage.getItem('track_utm_campaign') || 'מחשבון',
+                utm_content: localStorage.getItem('track_utm_content') || '',
+                utm_term: localStorage.getItem('track_utm_term') || '',
+                ad_name: localStorage.getItem('track_ad_name') || '',
+                adset_name: localStorage.getItem('track_adset_name') || '',
+                status: "new",
+                page_url: window.location.href,
+                user_agent: navigator.userAgent,
+                provider_notes: notes,
+                questions: [
+                    { q: "שווי נכס", a: assetValue.toLocaleString() + " ₪" },
+                    { q: "הכנסות חודשיות", a: monthlyIncome.toLocaleString() + " ₪" },
+                    { q: "גיל הלקוח", a: age.toString() },
+                    { q: "יתרת משכנתא", a: mortgageBal.toLocaleString() + " ₪" },
+                    { q: "החזר משכנתא", a: mortgagePay.toLocaleString() + " ₪" },
+                    { q: "יתרת הלוואות", a: loansBal.toLocaleString() + " ₪" },
+                    { q: "החזר הלוואות", a: loansPay.toLocaleString() + " ₪" },
+                    { q: "יתרת אשראי", a: ccBal.toLocaleString() + " ₪" },
+                    { q: "החזר אשראי", a: ccPay.toLocaleString() + " ₪" },
+                    { q: "יתרת מינוס", a: minusBal.toLocaleString() + " ₪" },
+                    { q: "חיסכון חודשי פוטנציאלי", a: monthlySavings }
+                ],
+                created_at: new Date().toISOString()
+            };
+
+            // --- UI Loading State ---
+            const container = document.getElementById('contact-form-container');
+            const originalContent = container.innerHTML;
+            container.innerHTML = '<div style="text-align:center; padding: 40px; font-weight:800; color:var(--finance-navy);">שולח את הפרטים למערכת...</div>';
+
+            const MAKE_WEBHOOK_URL = 'https://hook.eu1.make.com/jlfipq326tkwboouofuvgl9dllt75qw5';
+            
+            try {
+                // Determine if we are running locally or on a server
+                const isLocal = window.location.protocol === 'file:';
+                
+                const response = await fetch(MAKE_WEBHOOK_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(leadData),
+                    // We keep default mode 'cors' as Make supports it, but we log more info
+                });
+                
+                console.log('Response Status:', response.status);
+
+                if (response.ok || response.status === 200 || response.status === 202) {
+                    container.innerHTML = `<div class="success-msg">
+                        תודה ${firstName}!<br>הפרטים נשלחו בהצלחה.<br>נציג יחזור אליך למספר ${phone} בהקדם לבדיקה מעמיקה ומציאת פתרון הבראה כלכלית.
+                    </div>`;
+                    window.scrollTo({ top: container.offsetTop - 50, behavior: 'smooth' });
+                } else {
+                    const errorText = await response.text();
+                    console.error('Make Response Error:', errorText);
+                    throw new Error('Server error: ' + response.status);
+                }
+            } catch (e) {
+                console.error('Submission Error Details:', e);
+                alert('חלה שגיאה בשליחה. אם אתה מריץ את הקובץ מקומית, נסה להעלות אותו לשרת או לבדוק שה-Webhook ב-Make במצב ON.');
+                container.innerHTML = originalContent;
+            }
+        }
+    </script>
+
+    <!-- Smart Lead Source Tracking Script -->
+    <script>
+        (function () {
+            const trackingParams = ['utm_source', 'utm_campaign', 'utm_medium', 'utm_content', 'utm_term', 'ad_name', 'adset_name'];
+
+            function captureTrackingData() {
+                const urlParams = new URLSearchParams(window.location.search);
+                trackingParams.forEach(param => {
+                    const value = urlParams.get(param);
+                    if (value) {
+                        localStorage.setItem('track_' + param, value);
+                    }
+                });
+                localStorage.setItem('track_page', window.location.href);
+            }
+
+            function populateHiddenFields() {
+                const source = localStorage.getItem('track_utm_source') || 'organic';
+                const campaign = localStorage.getItem('track_utm_campaign') || 'general';
+                const medium = localStorage.getItem('track_utm_medium') || '';
+                const content = localStorage.getItem('track_utm_content') || '';
+                const term = localStorage.getItem('track_utm_term') || '';
+                const currentPage = window.location.href;
+
+                if (document.getElementById('track_source')) document.getElementById('track_source').value = source;
+                if (document.getElementById('track_campaign')) document.getElementById('track_campaign').value = campaign;
+                if (document.getElementById('track_medium')) document.getElementById('track_medium').value = medium;
+                if (document.getElementById('track_content')) document.getElementById('track_content').value = content;
+                if (document.getElementById('track_page')) document.getElementById('track_page').value = currentPage;
+            }
+
+            captureTrackingData();
+            window.addEventListener('load', populateHiddenFields);
+
+            // Expose function for manual trigger
+            window.updateTrackingFields = populateHiddenFields;
+        })();
+    </script>
+</body>
+
+</html>
