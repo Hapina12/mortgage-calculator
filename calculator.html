@@ -1068,10 +1068,7 @@
                 
                 const response = await fetch(MAKE_WEBHOOK_URL, {
                     method: 'POST',
-                    headers: { 
-                        'Content-Type': 'application/json',
-                        'security_token': 'padfhkwegyipfvhnAG:OSU'
-                    },
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(leadData),
                     // We keep default mode 'cors' as Make supports it, but we log more info
                 });
