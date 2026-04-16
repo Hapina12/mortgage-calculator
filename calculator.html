@@ -1049,6 +1049,7 @@
                     { q: "יתרת מינוס", a: minusBal.toLocaleString() + " ₪" },
                     { q: "חיסכון חודשי פוטנציאלי", a: monthlySavings }
                 ],
+                tag: "מחשבון", // Added tag to ensure automation identifies this as calculator lead
                 created_at: new Date().toISOString()
             };
 
@@ -1065,7 +1066,10 @@
                 
                 const response = await fetch(MAKE_WEBHOOK_URL, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'security_token': 'padfhkwegyipfvhnAG:OSU'
+                    },
                     body: JSON.stringify(leadData),
                     // We keep default mode 'cors' as Make supports it, but we log more info
                 });
