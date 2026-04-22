@@ -809,6 +809,26 @@
                 font-size: 18px !important;
                 margin-top: 20px !important;
             }
+
+            /* Compact Modal for Mobile */
+            #leadModal .modal-content {
+                padding: 30px 10px !important; /* Extremely small side padding */
+                margin-top: 5% !important;
+                width: 95% !important; /* Use more of the screen width */
+            }
+            #leadModal h2 {
+                font-size: 24px !important;
+                margin-bottom: 5px !important;
+            }
+            #leadModal p {
+                font-size: 14px !important;
+                margin-bottom: 10px !important;
+            }
+            #contact-form-container input, #contact-form-container textarea {
+                padding: 14px !important;
+                margin-bottom: 10px !important;
+                font-size: 15px !important;
+            }
         }
 
         .intro-logo {
@@ -1229,14 +1249,12 @@
                 <input type="email" id="lead-email" placeholder="כתובת אימייל">
                 <textarea id="lead_notes" rows="2" placeholder="משהו נוסף שתרצו שנדע?"></textarea>
 
-                <div style="display: flex; align-items: flex-start; gap: 10px; margin-bottom: 30px;">
+                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 20px;">
                     <input type="checkbox" id="lead-consent"
-                        style="width: 22px; height: 22px; cursor: pointer; accent-color: var(--accent-gold); margin-bottom: 0;">
+                        style="width: 20px; height: 20px; cursor: pointer; accent-color: var(--accent-gold); margin: 0;">
                     <label for="lead-consent"
-                        style="color: var(--text-muted); font-size: 14px; cursor: pointer; line-height: 1.4;">
-                        אני מאשר קבלת תכנים שיווקיים ופרסומיים באמצעי התקשורת השונים בהתאם ל<span onclick="openTerms()"
-                            style="color: var(--accent-gold); text-decoration: underline;">תנאי השימוש</span>, ל<span onclick="openPrivacy()"
-                            style="color: var(--accent-gold); text-decoration: underline;">מדיניות הפרטיות</span> ולחוק התקשורת.
+                        style="color: var(--text-muted); font-size: 14px; cursor: pointer;">
+                        אני מאשר את <span onclick="openTerms()" style="color: var(--accent-gold); text-decoration: underline;">תנאי השימוש</span> ו<span onclick="openPrivacy()" style="color: var(--accent-gold); text-decoration: underline;">מדיניות הפרטיות</span>
                     </label>
                 </div>
                 <button class="btn-luxury btn-primary" style="width: 100%; border-radius: 32px; font-size: 18px; white-space: nowrap; padding: 20px 10px;"
