@@ -3,8 +3,18 @@
 
 <head>
     <meta charset="UTF-8">
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-JMWHLFLVLR"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-JMWHLFLVLR');
+    </script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>מחשבון איחוד הלוואות חכם</title>
+    <meta name="google-site-verification" content="nU15yKdbEXWU4MN1RiAVzU2bMcEnO2XZBOSoKXCYQyc" />
     <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@200;300;400;600;700;800&display=swap"
         rel="stylesheet">
     <!-- Font Awesome Icons -->
@@ -842,6 +852,15 @@
             transition: all 0.5s ease;
         }
     </style>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-RNEW8N7N8M"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-RNEW8N7N8M');
+    </script>
+
     <!-- Meta Pixel Code -->
     <script>
     !function(f,b,e,v,n,t,s)
@@ -1224,7 +1243,7 @@
                 </div>
             </div>
 
-            <button class="btn-finalize" onclick="openLeadModal()" style="margin-top: 30px;">
+            <button class="btn-finalize" onclick="gtag('event', 'click_contact_representative'); openLeadModal()" style="margin-top: 30px;">
                 לשיחה עם נציג - לחץ כאן
                 <i class="fa-solid fa-arrow-left"></i>
             </button>
@@ -1298,7 +1317,8 @@
     </div>
 
     <!-- WhatsApp -->
-    <a href="https://wa.me/972559884824?text=היי%2C%20המחשבון%20הציג%20לי%20שכדאי%20לי%20לבדוק%20את%20החסכון%20שלי%20אשמח%20לפרטים" class="whatsapp-float" target="_blank">
+    <a href="https://wa.me/972559884824?text=היי%2C%20המחשבון%20הציג%20לי%20שכדאי%20לי%20לבדוק%20את%20החסכון%20שלי%20אשמח%20לפרטים" 
+       class="whatsapp-float" target="_blank" onclick="gtag('event', 'contact_whatsapp'); if(typeof fbq !== 'undefined') fbq('track', 'Contact');">
         <i class="fa-brands fa-whatsapp"></i>
     </a>
 
@@ -1520,6 +1540,8 @@
         }
 
         function triggerCalculation() {
+            // Track start of calculation
+            gtag('event', 'start_calculation');
             document.getElementById('loading').style.display = 'flex';
             setTimeout(() => {
                 calculateConsolidation();
@@ -1656,6 +1678,14 @@
 
             document.getElementById('results').style.display = 'block';
             document.getElementById('wizard-ui').style.display = 'none';
+            
+            // Track viewing results with savings value
+            gtag('event', 'view_results', {
+                'event_category': 'engagement',
+                'event_label': 'Calculation Completed',
+                'value': savings
+            });
+
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
@@ -1753,6 +1783,15 @@
                     body: JSON.stringify(leadData),
                 });
                 if (response.ok) {
+                    // Track Lead event in Meta Pixel
+                    if (typeof fbq === 'function') {
+                        fbq('track', 'Lead');
+                    }
+                    // Track Lead event in Google Analytics
+                    gtag('event', 'generate_lead', {
+                        'event_category': 'conversion',
+                        'event_label': 'Lead Form Submitted'
+                    });
                     container.innerHTML = `<div style="text-align:center; padding: 40px; color: var(--accent-gold); font-weight:800; font-size: 24px;">תודה! הפרטים התקבלו.<br><span style="font-size: 16px; font-weight: 300; color: #fff; display: block; mt-4">מומחה פיננסי בכיר יחזור אליך בהקדם לתיאום פגישה.</span></div>`;
                 } else {
                     throw new Error();
