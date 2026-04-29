@@ -57,13 +57,12 @@
             min-height: 100vh;
             display: flex;
             flex-direction: column;
-            justify-content: center;
             overflow-x: hidden;
             line-height: 1.6;
         }
 
         .step-progress-wrapper {
-            margin-bottom: 30px;
+            margin-bottom: 20px;
             display: flex;
             flex-direction: column;
             gap: 10px;
@@ -347,11 +346,22 @@
 
         /* Wrapper & Layout */
         .main-content {
-            padding: 30px 20px;
+            padding: 20px;
             max-width: 600px;
             width: 100%;
             margin: 0 auto;
             box-sizing: border-box;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .steps-container {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            width: 100%;
         }
 
         .header-section {
@@ -998,7 +1008,8 @@
                 </div>
             </div>
             <!-- Progress Bar Removed -->
-            <!-- Step 0: Intro Screen -->
+            <div class="steps-container">
+                <!-- Step 0: Intro Screen -->
             <div class="wizard-step active" id="step-0">
                 <div class="header-section" style="margin-bottom: 60px;">
                     <img src="logo1.png" alt="לוגו הפינה למשכנתאות" class="intro-logo">
@@ -1259,8 +1270,10 @@
                     <button class="btn-luxury btn-primary" onclick="triggerCalculation()">הפקת הדו"ח הפיננסי <i
                             class="fa-solid fa-sparkles"></i></button>
                 </div>
+                </div>
             </div>
         </div>
+    </div>
 
         <!-- Gold View Results -->
         <div id="results" class="results-container">
