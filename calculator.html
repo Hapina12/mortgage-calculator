@@ -72,7 +72,7 @@
         }
 
         .wizard-mini-logo {
-            max-width: 120px;
+            max-width: 150px;
             margin-bottom: 5px;
             opacity: 0.95;
         }
@@ -1504,10 +1504,9 @@
                 calculateConsolidation();
                 document.getElementById('results').style.display = 'block';
                 document.getElementById('wizard-ui').style.display = 'none';
-            } else if (data.currentStep > 0) {
-                startWizard();
-                showStep(data.currentStep);
+                document.getElementById('intro-screen').style.display = 'none';
             }
+        }
         }
 
         function syncSliderValue(slider, hiddenId, displayId) {
@@ -1605,12 +1604,15 @@
         }
 
         function startWizard() {
-            document.getElementById('step-0').classList.remove('active');
-            document.getElementById('step-1').classList.add('active');
-            currentStepNum = 1;
-            updateStepCounter();
-            saveToStorage();
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+            const saved = localStorage.getItem('finance_elite_state');
+            if (saved) {
+                const data = JSON.parse(saved);
+                if (data.currentStep && data.currentStep > 0) {
+                    showStep(data.currentStep);
+                    return;
+                }
+            }
+            showStep(1);
         }
 
         function showStep(step) {
